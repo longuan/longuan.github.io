@@ -1,16 +1,17 @@
-# Site settings
-title_left    : "Think"
-title_right   : "space" # default: ""
-description   : "Minimalist Jekyll theme for technical writing blog."
-keywords      : "Jekyll, theme, free, download, SEO, blog, web, minimalist, thinkspace"
-url           : https://heiswayi.github.io/thinkspace # site url
-baseurl       : "" # apply repo name like "/myproject" if used under gh-pages branch, else (under master branch) just leave empty/blank
-cover         : "" # image uri like logo/cover image for site seo
 
-google_analytics  : UA-XXXXX-XX
-twitter_username  : ""
-comments_enabled  : false # if enabled (set to true), please provide your disqus_username
-disqus_shortname  : ""
+# SEO settings
+title_left    : "dragon"
+title_right   : "power" # default: ""
+# description: "给我光明的欺骗，让我一直都向前"
+# keywords: "Jekyll, theme, free, download, SEO, blog, web, minimalist, thinkspace"
+url: https://longuan.github.io/ # site url
+baseurl: "" # apply repo name if use it under gh-pages branch
+# baseurl: null # apply null if repo name is something like username.github.io
+
+# google_analytics: UA-XXXXX-XX
+# disqus_shortname: "hnbloggithub"
+# twitter_username: "HeiswayiNrird"
+comments_enabled  : false
 postshare_enabled : false
 
 # Build settings
@@ -28,19 +29,28 @@ sass:
 
 # Author settings
 author:
-  name     : "John Doe"
+  name     : "longuan"
+  # job      : "Software Engineer"
+  bio      : "面对大河我无限惭愧 年华虚度 空有一身疲倦"
+  thumb    : /assets/images/author.jpg
+  email    : beatjean1314@gmail.com
+  url      : https://longuan.github.io
+  github   : https://github.com/longuan
 
 plugins:
   - jekyll-sitemap
   - bourbon
   - jekyll-paginate
+  - jekyll-feed
 
 # navbar pages
 navbar:
   - slug : about
     title: About
-  - slug : blog
-    title: Blog
+  - slug : links
+    title: Links
+  - slug : others
+    title: Others
 
 exclude:
   - "gulp"

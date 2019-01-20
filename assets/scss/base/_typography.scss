@@ -76,10 +76,10 @@ picture {
 }
 
 blockquote {
-  padding: $base-spacing 0 $base-spacing $base-spacing;
-  margin: $base-spacing 0;
+  padding: $base-spacing/2 0 $base-spacing/2 $base-spacing/2;
+  margin: $base-spacing/2 0;
   color: $dark-gray-color;
-  line-height: 1.8;
+  line-height: 1.6;
   border-left: $small-spacing solid $light-gray-color;
   background-color: lighten($light-gray-color, 15%);
   p {
@@ -91,7 +91,7 @@ code {
   background: none;
   border-radius: 0;
   border: none;
-  font-family: "SFMono-Regular",Menlo,Consolas,"Inconsolata",monospace;
+  font-family: "Overpass Mono", "Fira Code", "Source Code Pro", Menlo, Consolas, monospace;
   font-size: 1em;
   margin: 0;
   padding: 0 5px;
@@ -100,12 +100,12 @@ code {
 
 pre {
   -webkit-overflow-scrolling: touch;
-  font-family: "SFMono-Regular",Menlo,Consolas,"Inconsolata",monospace;
-  font-size: 1em;
+  font-family: "Overpass Mono", "Fira Code", "Source Code Pro", Menlo, Consolas, monospace;
+  font-size: 0.8em;
   margin: 0;
   padding: 5px 10px !important;
   overflow: auto;
-  max-height: 60em;
+  max-height: 80em;
   white-space: pre;
   border: 1px solid $light-gray-color;
 
@@ -126,10 +126,10 @@ em {
 ul,
 ol,
 dl {
-    margin-top: 0;
-    margin-left: 1.2em;
-    margin-bottom: 1rem;
-    list-style-type: square;
-    list-style-position: outside;
-    list-style-image: none;
+  margin-top: 0;
+  margin-left: 1.2em;
+  margin-bottom: 1rem;
+  list-style-type: square;
+  list-style-position: outside;
+  list-style-image: none;
 }

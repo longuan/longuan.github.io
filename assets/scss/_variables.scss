@@ -1,6 +1,6 @@
 // Typography
 @import url('https://fonts.googleapis.com/css?family=Overpass+Mono:400,700');
-$base-font-family: 'Overpass Mono', monospace;
+$base-font-family: 'verdana', 'Microsoft YaHei', 'PingFang SC', 'Overpass Mono','Arial', monospace;
 $heading-font-family: $base-font-family;
 
 // Font Sizes
@@ -20,14 +20,15 @@ $base-z-index: 0;
 $primary-color: #000;
 $action-color: $primary-color;
 $white-color: #fff;
-$black-color: #000;
+$black-color: #090909;
 $blue-color: #0086B3;
+$red-color: #e50053;
 $dark-gray-color: #333;
 $medium-gray-color: #999;
 $light-gray-color: #ccc;
 
 // Font Colors
-$base-font-color: rgba($dark-gray-color, .8);
+$base-font-color: rgba($black-color, .8);
 
 // Border
 $base-border-color: $light-gray-color;

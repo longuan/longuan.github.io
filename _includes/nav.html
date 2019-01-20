@@ -3,7 +3,10 @@
   <div class="container">
     <h1 class="logo"><a href="{{ '/' | prepend: site.baseurl | prepend: site.url }}">{{ site.title_left }}<span>{{ site.title_right }}</span></a></h1>
     <ul class="navbar">
-      <li><a href="{{ '/about' | prepend: site.baseurl | prepend: site.url }}">About me</a></li>
+      <li><a href="{{ '/about' | prepend: site.baseurl | prepend: site.url}}">About</a></li>
+      <li><a href="{{ '/articles' | prepend: site.baseurl | prepend: site.url}}">Articles</a></li>
+      <li><a href="{{ '/links' | prepend: site.baseurl | prepend: site.url}}" target="_blank">Links</a></li>
+      <li><a href="{{ '/others' | prepend: site.baseurl | prepend: site.url}}" >Others</a></li>
       <li><a href="{{ "/feed.xml" | prepend: site.baseurl | prepend: site.url }}" target="_blank">RSS</a></li>
     </ul>
   </div>
