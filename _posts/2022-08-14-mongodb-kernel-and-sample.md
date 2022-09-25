@@ -168,5 +168,7 @@ sample size为700000时，random cursor和random sort的耗时差不多。因为
 
 ## 5. 总结
 
-本文详细介绍了MongoDB中$sample操作的底层实现，以及分析了$sample操作的性能。总体来说，如果要采样整个collection中的数据，在进行查询时要注意满足[三个条件](https://www.mongodb.com/docs/manual/reference/operator/aggregation/sample/#behavior)，让其走random cursor的逻辑，比较节省资源。对于分片表来说，可以通过减小sample size使其走random cursor的逻辑。其他情况会有正常的全表扫描和排序行为。
+本文详细介绍了MongoDB中$sample操作的底层实现，以及分析了$sample操作的性能。总体来说，如果要采样整个collection中的数据，在进行查询时要注意满足[三个条件](https://www.mongodb.com/docs/manual/reference/operator/aggregation/sample/#behavior)，让其走random cursor的逻辑，比较节省资源。其他情况会有正常的全表扫描和排序行为。
+
+对于分片表来说，从mongos执行sample，行为可能会跟文档中描述的不一致。因为mongos将sample size直接透传给每个shard，而每个shard只能看到自己分片上的数据，导致更可能走random sort的逻辑。这个问题的具体讨论可以见https://jira.mongodb.org/browse/SERVER-68623。更保险的是，通过mongos执行sample之前，先看explain，确定每个shard上采用的哪种采样策略。
 
