@@ -20,6 +20,7 @@ title: "并发编程之我见"
 	- memory model/order
 		- Out-of-order execution
 		- compiler reordering optimizations
+		- Store buffer、Invalidate queues
 	- 例子
 - 如何更好地编写并发代码
 - 参考
@@ -45,7 +46,7 @@ title: "并发编程之我见"
 并发的好处有很多，比如提升对CPU的使用效率、降低系统的响应时间等等。缺点就是不容易正确的实现，而且难以调试和复现。
 
 为了克服这个缺点，也就是又快又好地实现并发，需要从三方面入手：
-- 软件设计。自顶向下地对应用程序进行分解剖析，理清总体流程，进行模块化分工。基本就是软件工程的一些内容，这块我还不太熟练就不说了。在设计之初就应该考虑程序的并发模型以及并发方式。
+- 软件设计。自顶向下地对应用程序进行分解剖析，理清总体流程，进行模块化分工。在设计之初就应该考虑程序的并发模型以及并发方式。这块目前还不是很了解，不细说。
 - 熟悉环境。详细地了解操作系统、编程语言以及硬件架构。目前主要的开发平台是Linux，这个应该不用多说，还有posix 线程模型，cpu和内存的访存体系也应该关注。不同编程语言提供的特性差别比较大，灵活性也各有所异。
 - 代码实现。前面已经把程序分解为不同的task，这一步就是借助操作系统以及编程语言确保各个task正常工作、task之间的交互以及通信不出错，协同工作。
 
@@ -126,11 +127,11 @@ https://en.wikipedia.org/wiki/Memory_ordering
 
 从常用的操作系统来说，并发的基本单位是线程。线程是进程中的一个执行流，进程是操作系统进行资源管理的基本单位。线程/进程也就是我们常用的task的“容器”。
 
-多线程与多进程：上下文切换开销。
+
 - each thread maintains exception handlers, a scheduling priority, thread local storage, a unique thread identifier, and a set of structures the system will use to save the thread context until it is scheduled. The thread context includes the thread's set of machine registers, the kernel stack, a thread environment block, and a user stack in the address space of the thread's process. Threads can also have their own security context, which can be used for impersonating clients.
 - 多线程间共享进程的address space
 
-操作系统有着自己的调度系统来协调多个线程和进程的并发执行。这个调度策略以及调度顺序对我们一般是完全透明的，好像我们的代码是真正地在CPU上不间断运行。不管你的程序是多线程还是单线程，都可以认为自己的代码是在“并行执行”。
+操作系统有着自己的调度系统来协调多个线程和进程的并发执行。这个调度策略以及调度顺序对我们一般是完全透明的，好像我们的代码是真正地在CPU上不间断运行。如果你的程序是多线程，可以认为自己的代码是在“并行执行”。
 
 有了线程的概念，可以更形式化地描述并发中的一些问题（在后面介绍）：
 - A **critical section** is a piece of code that accesses a shared resource, usually a variable or data structure.
@@ -139,7 +140,7 @@ https://en.wikipedia.org/wiki/Memory_ordering
 
 出现这些问题的原因就是多线程同时执行critical section的代码导致的。前面说到硬件层面提供了原子指令来保证一条指令的执行不会受到干扰，而critical section很可能有很多条指令，操作系统也提供了**synchronization primitives**来保证critical section的执行原子性以及协调多线程之间的执行顺序。
 
-操作系统也是一个软件，所以操作系统已经实现了很多的synchronization primitives。当然你也可以在自己的软件内实现synchronization primitives或者使用编程语言library里的。
+操作系统已经实现了很多的synchronization primitives。当然你也可以在自己的软件内实现synchronization primitives或者使用编程语言library里的。
 
 Linux上有sys_futex系统调用。
 
@@ -149,7 +150,7 @@ POSIX Threads模型上有：
 	- Singularity。另一个线程要想获取已经locked的mutex，只能等这个mutex被持有者unlock
 	- Non-Busy Wait。想获取已经locked的mutex的线程会被挂起（让出CPU），直到锁被释放，此线程就会被唤醒，然后持有锁。
 - pthread_cond，A condition variable is a mechanism that allows threads to wait (without wasting CPU cycles) for some even to occur. 通常需要结合一个mutex使用。
-- samaphore。可以把信号量当作mutex和条件变量使用。
+- samaphore。可以把信号量当作mutex加上条件变量使用。
 
 ### 从编程语言层面
 
@@ -272,20 +273,9 @@ if(!queue.isEmpty()) {
 
 指编译器优化造成的指令重排。同out-of-order execution，多线程环境下可能出现问题。
 
-### 例子：
+#### Store buffer、Invalidate queues
 
-线程1的赋值顺序是b、a，我们期望并发运行结果是打印“shit”。但是如果发生指令重排，线程1的赋值顺序变为a、b，那最后的打印结果可能就不是“shit”：
-
-```
-thread 1:
-    b = "shit";
-    a = 10;
-
-thread 2:
-    if (a==10){
-        print(b);
-    }
-```
+现代CPU中通常会引入Store buffer和Invalidate queues两个组件来提高CPU的利用率，但缺点就是会导致并行情况下的一些乱序行为。不过硬件层面也都提供了各种手段来避免这种乱序的发生，比如memory barrier。
 
 
 ## 如何更好地编写并发代码
