@@ -1,31 +1,3 @@
----
-title: "并发编程之我见"
----
-
-
-
-目录：
-- 什么是并发？与并行的区别
-- 并发是如何工作的
-	- 从硬件层面
-	- 从编译器层面
-	- 从操作系统层面
-	- 从编程语言层面
-	- 总结
-- 并发中常见的问题
-	- deadlock
-	- data races
-	- Atomicity-Violation Bugs
-	- Order-Violation Bugs
-	- memory model/order
-		- Out-of-order execution
-		- compiler reordering optimizations
-		- Store buffer、Invalidate queues
-	- 例子
-- 如何更好地编写并发代码
-- 参考
-
-
 
 
 
@@ -217,20 +189,24 @@ POSIX Threads模型上有：
 - 不剥夺：进程已获得的资源不能强行剥夺
 - 循环等待：若干进程之间形成头尾相接的循环等待资源关系
 
-如何避免：编码规范，加锁顺序。
+常见的死锁有以下几种类型：
+- AA型死锁
+- ABBA型死锁
 
-### data races 
+如何避免：编码规范，加锁顺序（lock ordering），死锁预防和死锁避免算法。
+
+### data race
+
+data race就是我们常见的“多个线程访问同一个变量，有读有写，并且没有做互斥保护”带来的问题。
 
 Conflicting accesses of the same variable that are not ordered by a happens-before relationship
 
 https://stackoverflow.com/questions/11276259/are-data-races-and-race-condition-actually-the-same-thing-in-context-of-conc
 
-- race condition 
-- data race
-
 如何避免：识别哪些变量是会被多个线程访问，并且至少一个线程是写的，记得加锁，也不要加错了锁
 
-### Atomicity-Violation Bugs
+### race condition
+#### Atomicity-Violation Bugs
 
 严格意义上来讲，Data Race只是Atomicity Violation的一个特例，因为即使加锁保证了某块代码的原子性，但是Atomic + Atomic != Atomic，还是有可能出现Atomicity-Violation bugs。
 
@@ -244,10 +220,11 @@ if(!queue.isEmpty()) {
 
 如何避免：加锁
 
-### Order-Violation Bugs
+#### Order-Violation Bugs
 
 意思就是程序运行的顺序不符合程序员预期的顺序。
 
+比如程序对全局变量的初始化顺序有依赖。
 
 如何避免：着重分析变量的数据依赖关系，使用锁或者条件变量或者信号量等等保证顺序
 
@@ -283,10 +260,11 @@ if(!queue.isEmpty()) {
 
 在总结并发中常见的问题时就已经给出了常用的规避bug的方法。
 
-主要就三个方面：
-- 识别critical section和共享变量，加锁保护
-- 注意编码，不要死锁
-- 设计memory model时，关注共享变量在多线程中的可见性
+主要就几个方面：
+- 注意编码，不要死锁。这个是重中之重。
+- 避免data race。保护共享变量，访问的时候一定要保证原子性。
+- 避免race condition。识别并保护critical section，避免上面提到的顺序性并发问题。
+- 设计memory model时，关注共享变量在多线程中的可见性。
 
 另外还要加一点：多用sanitizer，趁早检测出bug。
 
