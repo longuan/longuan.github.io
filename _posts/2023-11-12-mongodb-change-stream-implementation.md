@@ -410,7 +410,7 @@ GetMoreCmd::Invocation::run
 
 ### CollectionScan
 
-query长这样（没有CMongo的patch）：
+query长这样：
 ![changestream-collectionscan-filter](/assets/images/changestream-collectionscan-filter.png)
 
 过滤条件有很多：
@@ -421,12 +421,12 @@ query长这样（没有CMongo的patch）：
 - 另外捕获了drop、dropDatabase、renameCollection、commitTransaction、applyOps等DDL操作
 
 collectionScan不是从头开始的，而是从小于等于客户端指定时间戳，且最近的那条oplog开始。如果所有oplog的ts都比客户端指定时间戳大，collectionScan就从头开始。然后collectionScan会检查这条oplog，如果不满足下面任一条件，就说明oplog被冲了，会抛出ErrorCodes::OplogQueryMinTsMissing 异常。
-- 此oplog是类型是n，o.msg是initiating set。表示这是一个新副本集
+- 此oplog是类型是n，o.msg是initiating set。表示这是一个新副本集。具体见CollectionScan::assertMinTsHasNotFallenOffOplog 函数
 - 此oplog的ts小于等于给定的ts
 
 只要有一个shard上的oplog被冲了，change stream命令就会报错。
 
-CMongo修改了这个filter，来捕获更多的oplog。
+可以修改了这个filter，来捕获更多的oplog。
 
 另外需要关注，CollectionScan每次返回文档之前都更新一下_latestOplogEntryTimestamp：
 ```cpp
@@ -623,7 +623,7 @@ Document DocumentSourceChangeStreamTransform::applyTransformation(const Document
 - oplog的ts字段被用来生成resume token，被用来当作event的clusterTime字段的值
 - resume token同时作为 event的_id 和 sortKey
 
-CMongo修改了这里，支持对更多类型的oplog进行转换。
+可以修改了这里，支持对更多类型的oplog进行转换。
 
 ### DocumentSourceCheckInvalidate
 
